@@ -1,0 +1,94 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+
+ext {
+    javaVersion = '1.7'
+}
+
+repositories {
+    mavenCentral()
+}
+
+sourceCompatibility = javaVersion
+targetCompatibility = javaVersion
+
+// 인코딩 지정
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+version = '1.0'
+
+def version = [
+        spring: '4.0.2.RELEASE'
+        , slf4j: '1.7.5'
+        , logBack: '1.0.13'
+]
+
+def springFrameworks = [
+        "org.springframework:spring-core:${version.spring}"
+        , "org.springframework:spring-context:${version.spring}"
+        , "org.springframework:spring-aop:${version.spring}"
+        , "org.springframework:spring-aspects:${version.spring}"
+        , "org.springframework:spring-test:${version.spring}"
+]
+
+dependencies {
+
+    /**
+     * SpringFramework: http://www.springsource.org/spring-framework
+     */
+    //compile springFrameworks //도 가능
+    springFrameworks.collect {
+        compile(it) {
+            // exclude(group: "cglib", module: "cglib")
+        }
+    }
+
+    /**
+     * SLF4j & Logback
+     * SLF4j: http://www.slf4j.org/
+     * Logback: http://logback.qos.ch/
+     */
+    compile "org.slf4j:slf4j-api:${version.slf4j}"
+    runtime "org.slf4j:jcl-over-slf4j:${version.slf4j}"
+    runtime "org.slf4j:log4j-over-slf4j:${version.slf4j}"
+    compile "ch.qos.logback:logback-classic:${version.logBack}"
+
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.10'
+}
+
+// source, resources directory 생성
+task initProject(description: 'initialize project') << {
+    createDir = {
+        println "create source directory: $it"
+        it.mkdirs()
+    }
+    sourceSets*.java.srcDirs*.each createDir
+    sourceSets*.resources.srcDirs*.each createDir
+}
+
+tasks.eclipse.dependsOn cleanEclipse
+
+
+idea {
+
+    //if you love browsing Javadoc
+    downloadJavadoc = true
+
+    //and hate reading sources :)
+    // downloadSources = false
+    downloadSources = true
+
+}
+
+eclipse {
+    classpath {
+        downloadJavadoc = true
+        downloadSources = true
+    }
+}

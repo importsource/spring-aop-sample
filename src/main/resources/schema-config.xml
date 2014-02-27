@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <!-- 사악한 사원 -->
+    <bean id="evilEmployee" class="aop.base.EvilEmployee" />
+
+    <!-- 훌륭한 사원 -->
+    <bean id="excellentEmployee" class="aop.base.ExcellentEmployee" />
+
+    <!-- 인사 - hello, bye -->
+    <bean id="helloByeAspect" class="aop.schema.HelloByeAspect" />
+
+    <!-- 인사 - hello -->
+    <bean id="helloAspect" class="aop.schema.HelloAspect" />
+
+    <!-- 놀람 -->
+    <bean id="surpriseAspect" class="aop.schema.SurpriseAspect" />
+
+    <!-- 집으로 감 -->
+    <bean id="goHomeAspect" class="aop.schema.GoHomeAspect" />
+
+    <!-- 짱박힘 -->
+    <bean id="hideAspect" class="aop.schema.HideAspect" />
+
+
+    <!--
+    <aop:config>
+      <aop:pointcut id="greetingPointcut" expression="execution(* base.Jaeyong.work(..))"/>
+      <aop:aspect ref="helloByeAspect">
+        <aop:before method="helloBeforeAdvice" pointcut-ref="greetingPointcut"/>
+        <aop:after-returning method="byeAfterAdvice" pointcut-ref="greetingPointcut"/>
+      </aop:aspect>
+    </aop:config>
+    -->
+
+    <aop:config>
+
+        <aop:pointcut id="greetingPointcut" expression="execution(* aop.base.Employee.work(..))"/>
+        <aop:pointcut id="allMethodPointcut" expression="execution(* aop.base.*.*(..))"/>
+        <aop:pointcut id="playGamePointcut" expression="execution(* aop.base.EvilEmployee.playGame(..))"/>
+
+        <aop:aspect ref="helloByeAspect">
+            <aop:before method="helloBeforeAdvice" pointcut-ref="greetingPointcut"/>
+            <aop:after-returning method="byeAfterAdvice" pointcut-ref="greetingPointcut"/>
+        </aop:aspect>
+
+
+        <aop:aspect ref="surpriseAspect">
+          <aop:around method="hul" pointcut-ref="allMethodPointcut"/>
+        </aop:aspect>
+
+
+        <aop:aspect ref="hideAspect">
+          <aop:before method="hide" pointcut-ref="playGamePointcut" />
+        </aop:aspect>
+
+        <aop:aspect ref="goHomeAspect">
+          <aop:after method="goHome" pointcut-ref="playGamePointcut"/>
+        </aop:aspect>
+
+
+    </aop:config>
+
+</beans>

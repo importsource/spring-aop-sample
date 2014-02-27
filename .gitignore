@@ -17,6 +17,8 @@ bin/
 gradle/
 gradlew
 gradlew.bat
+.settings.gradle
+spring_advice_type.uml
 
 
 # logs
